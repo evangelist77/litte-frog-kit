@@ -1,0 +1,11 @@
+{
+  "name": "litte-frog-kit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Lightweight 1:1 interactive 3D LEGO WeDo 2.0 Little Frog builder for Vercel",
+  "scripts": {
+    "pack": "python3 scripts/pack_ldraw_bundle.py",
+    "serve": "python3 -m http.server 8123 --directory public",
+    "test": "python3 -m unittest discover -s tests -v"
+  }
+}

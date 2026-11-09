@@ -1,0 +1,382 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+html, body, #app {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #f8f9fa;
+  color: #1f2937;
+}
+
+#main-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+
+#main-canvas:active {
+  cursor: grabbing;
+}
+
+/* Left-side 3D component list: NO card, NO border, NO shadow, scrollable with hidden scrollbar */
+#parts-tray {
+  position: fixed;
+  top: 16px;
+  left: 12px;
+  width: 240px;
+  height: calc(100vh - 32px);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  pointer-events: auto;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 12;
+}
+
+#parts-tray::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+#parts-tray.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-20px);
+}
+
+#parts-sticky-wrap {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#parts-scroll-spacer {
+  width: 1px;
+  height: 100%;
+  pointer-events: none;
+}
+
+#parts-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+/* Bottom "Komponen Yang Dibuat" strip: centered in workspace to the right of left component list */
+#subassembly-bar {
+  position: fixed;
+  left: 256px;
+  right: 24px;
+  bottom: 48px;
+  height: 176px;
+  background: transparent;
+  pointer-events: auto;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 11;
+}
+
+#subassembly-bar.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px);
+}
+
+#subassembly-title {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #374151;
+  background: rgba(248, 249, 250, 0.88);
+  padding: 2px 10px;
+  border-radius: 3px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+#subassembly-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+/* Right-side Subassembly Detail Panel (Top: enlarged + ultra-transparent context; Bottom: unit parts used) */
+#subassembly-detail-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 290px;
+  bottom: 232px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(248, 249, 250, 0.78);
+  border-left: 1px dashed rgba(148, 163, 184, 0.55);
+  backdrop-filter: blur(4px);
+  pointer-events: auto;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 13;
+}
+
+#subassembly-detail-panel.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(24px);
+}
+
+#detail-top-wrap {
+  position: relative;
+  width: 100%;
+  flex: 1.15;
+  min-height: 0;
+}
+
+#detail-divider {
+  width: 82%;
+  height: 1px;
+  margin: 0 auto;
+  background: rgba(148, 163, 184, 0.45);
+}
+
+#detail-bottom-wrap {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+#detail-top-canvas,
+#detail-bottom-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+/* Hover tooltip for component names (and .dat code in debug mode) */
+#part-tooltip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 6px 10px;
+  background: rgba(24, 28, 34, 0.92);
+  color: #f8f9fa;
+  font-size: 12px;
+  line-height: 1.35;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 30;
+  transition: opacity 0.12s ease;
+}
+
+#part-tooltip.hidden {
+  opacity: 0;
+}
+
+/* Debug mode overlay badges for .dat part codes */
+.debug-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 15;
+}
+
+.debug-badge {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  padding: 1px 5px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #111827;
+  background: rgba(254, 240, 138, 0.92);
+  border: 1px solid #ca8a04;
+  border-radius: 3px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+#step-dots {
+  position: fixed;
+  bottom: 14px;
+  left: calc(50% + 116px);
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(184, 194, 204, 0.6);
+  border-radius: 999px;
+  z-index: 14;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(100, 116, 139, 0.35);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.dot[data-state="0"],
+.dot[data-state="7"] {
+  border-radius: 2px;
+}
+
+.dot.active {
+  background: #2563eb;
+  transform: scale(1.35);
+}
+
+/* Info Button (ⓘ) in bottom-right corner */
+#info-btn {
+  position: fixed;
+  bottom: 14px;
+  right: 18px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(184, 194, 204, 0.7);
+  background: rgba(255, 255, 255, 0.85);
+  color: #4b5563;
+  font-family: serif;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 26px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 25;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+#info-btn:hover {
+  background: #ffffff;
+  color: #1f2937;
+  border-color: #94a3b8;
+  transform: scale(1.08);
+}
+
+/* Credits & Legal Modal */
+#info-modal.hidden {
+  display: none;
+}
+
+#info-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+#modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+}
+
+#modal-dialog {
+  position: relative;
+  width: 90%;
+  max-width: 500px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  padding: 24px;
+  z-index: 101;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+#modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 12px;
+}
+
+#modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+
+#modal-close {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+#modal-close:hover {
+  color: #0f172a;
+  background: #f1f5f9;
+}
+
+.legal-section {
+  margin-bottom: 16px;
+}
+
+.legal-section:last-child {
+  margin-bottom: 0;
+}
+
+.legal-section h3 {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.legal-section p {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #475569;
+}
+
+.legal-section code {
+  background: #f1f5f9;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-size: 11.5px;
+  color: #0f172a;
+}
+

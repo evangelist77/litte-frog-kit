@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="preload" href="./assets/ldraw-bundle.json" as="fetch" crossorigin="anonymous" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <div id="parts-tray" class="hidden" aria-hidden="true">
+      <div id="parts-sticky-wrap">
+        <canvas id="parts-canvas"></canvas>
+        <div id="parts-debug-labels" class="debug-layer"></div>
+      </div>
+      <div id="parts-scroll-spacer"></div>
+    </div>
+
+    <canvas id="main-canvas"></canvas>
+    <div id="main-debug-labels" class="debug-layer"></div>
+
+    <div id="subassembly-detail-panel" class="hidden" aria-hidden="true">
+      <div id="detail-top-wrap">
+        <canvas id="detail-top-canvas"></canvas>
+        <div id="detail-top-debug-labels" class="debug-layer"></div>
+      </div>
+      <div id="detail-divider"></div>
+      <div id="detail-bottom-wrap">
+        <canvas id="detail-bottom-canvas"></canvas>
+        <div id="detail-bottom-debug-labels" class="debug-layer"></div>
+      </div>
+    </div>
+
+    <div id="subassembly-bar" class="hidden" aria-hidden="true">
+      <div id="subassembly-title">Komponen Yang Dibuat</div>
+      <canvas id="subassembly-canvas"></canvas>
+      <div id="subassembly-debug-labels" class="debug-layer"></div>
+    </div>
+
+    <div id="part-tooltip" class="hidden" aria-hidden="true"></div>
+
+    <button id="info-btn" aria-label="Credits & Legal" title="Credits & Legal">ⓘ</button>
+
+    <div id="info-modal" class="hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div id="modal-backdrop"></div>
+      <div id="modal-dialog">
+        <div id="modal-header">
+          <h2 id="modal-title">Credits & Legal Notice</h2>
+          <button id="modal-close" aria-label="Close dialog">✕</button>
+        </div>
+        <div id="modal-body">
+          <section class="legal-section">
+            <h3>Disclaimer & Legal Notice</h3>
+            <p>LEGO® and WeDo® are trademarks of the LEGO Group of companies which does not sponsor, authorize, or endorse this site. This web application is an independent, non-commercial educational tool created strictly for learning purposes.</p>
+          </section>
+          <section class="legal-section">
+            <h3>3D Parts Attribution</h3>
+            <p>3D brick geometries (<code>ldraw-bundle.json</code>) are provided by the LDraw™ Parts Library under the Creative Commons Attribution License 2.0 (CC BY 2.0). LDraw™ is a trademark owned and licensed by the Estate of James Jessiman.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div id="step-dots" aria-hidden="true">
+      <span class="dot active" data-state="0"></span>
+      <span class="dot" data-state="1"></span>
+      <span class="dot" data-state="2"></span>
+      <span class="dot" data-state="3"></span>
+      <span class="dot" data-state="4"></span>
+      <span class="dot" data-state="5"></span>
+      <span class="dot" data-state="6"></span>
+      <span class="dot" data-state="7"></span>
+    </div>
+  </div>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>
